@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import localFont from "next/font/local";
-
-const AlimamaShuHeiTi = localFont({
-  src: "../assets/fonts/AlimamaShuHeiTi-Bold.woff",
-  variable: "--font-ali",
-  weight: "100 900",
-});
+import { Inter } from "next/font/google";
+import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
   title: {
@@ -17,6 +12,7 @@ export const metadata: Metadata = {
   description: "AI简历生成器是帮助你创建专业简历、获得理想工作的最简单方式。",
 };
 
+const inter = Inter({ subsets: ["latin"] });
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,8 +20,17 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={`${AlimamaShuHeiTi.variable}`}>{children}</body>
+      <html lang="en" suppressHydrationWarning>
+        <body className={inter.className}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </body>
       </html>
     </ClerkProvider>
   );
