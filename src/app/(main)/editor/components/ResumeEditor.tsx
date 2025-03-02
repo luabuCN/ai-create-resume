@@ -1,10 +1,24 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import GeneralInfoForm from "../forms/generalInfoForm";
+import { useSearchParams } from "next/navigation";
+import { steps } from "../config/steps";
+import Breadcrumbs from "./Breadcrumbs";
+import Footer from "./footer";
 
 const ResumeEditor = () => {
+  const searchParams = useSearchParams();
+  const currentStep = searchParams.get("step") || steps[0].key;
+
+  const setCurrentStep = (key: string) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("step", key);
+    window.history.pushState(null, "", `?${newSearchParams.toString()}`);
+  };
+
+  const FormComponent = steps.find(
+    (step) => step.key === currentStep
+  )?.component;
+
   return (
     <div className="flex grow flex-col">
       <header className="space-y-1.5 border-b px-3 py-3 text-center">
@@ -15,36 +29,18 @@ const ResumeEditor = () => {
       </header>
       <main className="relative grow">
         <div className="absolute bottom-0 top-0 flex w-full">
-          <div className="w-full md:w-1/2 p-3">
-            <GeneralInfoForm />
+          <div className="w-full md:w-1/2 p-3 overflow-y-auto space-y-6">
+            <Breadcrumbs
+              currentStep={currentStep}
+              setCurrentStep={setCurrentStep}
+            />
+            {FormComponent && <FormComponent />}
           </div>
           <div className="grow md:border-r" />
           <div className="md:flex w-1/2 hidden p-3">right</div>
         </div>
       </main>
-      <footer className="w-full border-t px-3 py-3">
-        <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3">
-          <div className="flex items-center gap-3 font-mono ">
-            <Button
-              variant="secondary"
-              className="tracking-[0.3em] font-semibold"
-            >
-              上一步
-            </Button>
-            <Button className="tracking-[0.3em] font-semibold">下一步</Button>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="secondary"
-              asChild
-              className="tracking-[0.3em] font-semibold"
-            >
-              <Link href="/resumes">关闭</Link>
-            </Button>
-            <p className=" text-muted-foreground opacity-0">保存中...</p>
-          </div>
-        </div>
-      </footer>
+      <Footer currentStep={currentStep} setCurrentStep={setCurrentStep} />
     </div>
   );
 };

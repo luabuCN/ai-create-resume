@@ -1,0 +1,55 @@
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import type { FC } from "react";
+import { steps } from "../config/steps";
+
+interface FooterProps {
+  currentStep: string;
+  setCurrentStep: (step: string) => void;
+}
+
+const Footer: FC<FooterProps> = ({ currentStep, setCurrentStep }) => {
+  const previousStep = steps.find(
+    (_, index) => steps[index + 1]?.key === currentStep
+  )?.key;
+  const nextStep = steps.find(
+    (_, index) => steps[index - 1]?.key === currentStep
+  )?.key;
+  return (
+    <footer className="w-full border-t px-3 py-3">
+      <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3">
+        <div className="flex items-center gap-3 font-mono ">
+          <Button
+            variant="secondary"
+            className="tracking-[0.3em] font-semibold"
+            onClick={
+              previousStep ? () => setCurrentStep(previousStep) : undefined
+            }
+            disabled={!previousStep}
+          >
+            上一步
+          </Button>
+          <Button
+            className="tracking-[0.3em] font-semibold"
+            onClick={nextStep ? () => setCurrentStep(nextStep) : undefined}
+            disabled={!nextStep}
+          >
+            下一步
+          </Button>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="secondary"
+            asChild
+            className="tracking-[0.3em] font-semibold"
+          >
+            <Link href="/resumes">关闭</Link>
+          </Button>
+          <p className=" text-muted-foreground opacity-0">保存中...</p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
