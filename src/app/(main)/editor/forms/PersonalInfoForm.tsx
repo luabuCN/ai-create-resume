@@ -11,30 +11,35 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type FC } from "react";
+import type { EditorFormProps } from "@/lib/types";
 
-const PersonalInfoForm = () => {
+const PersonalInfoForm: FC<EditorFormProps> = ({
+  resumeData,
+  setResumeData,
+}) => {
   const form = useForm<PersonalInfoValues>({
     resolver: zodResolver(presonalInfoSchema),
     defaultValues: {
-      name: "",
-      jobTitle: "",
-      city: "",
-      email: "",
-      country: "",
-      phone: "",
+      name: resumeData.name || "",
+      jobTitle: resumeData.jobTitle || "",
+      city: resumeData.city || "",
+      email: resumeData.email || "",
+      country: resumeData.country || "",
+      phone: resumeData.phone || "",
     },
   });
 
   const photoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const { unsubscribe } = form.watch(async () => {
+    const { unsubscribe } = form.watch(async (values) => {
       const isValid = await form.trigger();
       if (!isValid) return;
+      setResumeData({ ...resumeData, ...values });
     });
     return unsubscribe;
-  }, []);
+  }, [form, resumeData, setResumeData]);
 
   return (
     <div className="max-w-xl mx-auto space-6">
