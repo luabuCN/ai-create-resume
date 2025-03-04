@@ -6,6 +6,7 @@ import Breadcrumbs from "./Breadcrumbs";
 import Footer from "./Footer";
 import { useState } from "react";
 import type { ResumeValues } from "@/lib/validation";
+import ResumePreviewSection from "./ResumePreviewSection";
 
 const ResumeEditor = () => {
   const searchParams = useSearchParams();
@@ -44,9 +45,10 @@ const ResumeEditor = () => {
             )}
           </div>
           <div className="grow md:border-r" />
-          <div className="md:flex w-1/2 hidden p-3">
-            <pre>{JSON.stringify(resumeData, null, 2)}</pre>
-          </div>
+          <ResumePreviewSection
+            resumeData={resumeData}
+            setResumeData={setResumeData}
+          />
         </div>
       </main>
       <Footer currentStep={currentStep} setCurrentStep={setCurrentStep} />
