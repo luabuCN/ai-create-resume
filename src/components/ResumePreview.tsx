@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { formatDate } from "date-fns";
 import { Badge } from "./ui/badge";
+import { BorderStyles } from "@/app/(main)/editor/components/BorderStyleButton";
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
@@ -45,7 +46,17 @@ interface ResumeSectionProps {
 }
 
 const PersonalInfoHeader: React.FC<ResumeSectionProps> = ({ resumeData }) => {
-  const { photo, name, jobTitle, city, country, phone, email } = resumeData;
+  const {
+    photo,
+    name,
+    jobTitle,
+    city,
+    country,
+    phone,
+    email,
+    colorHex,
+    borderStyle,
+  } = resumeData;
   const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
 
   useEffect(() => {
@@ -64,12 +75,24 @@ const PersonalInfoHeader: React.FC<ResumeSectionProps> = ({ resumeData }) => {
           height={100}
           alt="Author photo"
           className="aspect-square object-cover"
+          style={{
+            borderRadius:
+              borderStyle === BorderStyles.SQUARE
+                ? "0px"
+                : borderStyle === BorderStyles.CIRCLE
+                  ? "9999px"
+                  : "10%",
+          }}
         />
       )}
       <div className="space-y-2.5">
         <div className="space-y-1">
-          <p className="text-3xl font-bold">{name}</p>
-          <p className="font-medium">{jobTitle}</p>
+          <p className="text-3xl font-bold" style={{ color: colorHex }}>
+            {name}
+          </p>
+          <p className="font-medium" style={{ color: colorHex }}>
+            {jobTitle}
+          </p>
         </div>
         <p className="text-xs text-gray-500">
           {country}
@@ -84,13 +107,13 @@ const PersonalInfoHeader: React.FC<ResumeSectionProps> = ({ resumeData }) => {
 };
 
 const SummarySection: React.FC<ResumeSectionProps> = ({ resumeData }) => {
-  const { summary } = resumeData;
+  const { summary, colorHex } = resumeData;
 
   if (!summary) return null;
 
   return (
     <>
-      <hr className="border-2" />
+      <hr className="border-2" style={{ borderColor: colorHex }} />
       <div className="break-inside-avoid space-y-3">
         <p className="text-lg font-semibold ">个人简介</p>
         <div className="whitespace-pre-line text-sm">{summary}</div>
@@ -102,7 +125,7 @@ const SummarySection: React.FC<ResumeSectionProps> = ({ resumeData }) => {
 const WorkExperienceSection: React.FC<ResumeSectionProps> = ({
   resumeData,
 }) => {
-  const { workExperiences } = resumeData;
+  const { workExperiences, colorHex } = resumeData;
 
   const workExperiencesNotEmpty = workExperiences?.filter(
     (exp) => Object.values(exp).filter(Boolean).length > 0
@@ -112,15 +135,17 @@ const WorkExperienceSection: React.FC<ResumeSectionProps> = ({
 
   return (
     <>
-      <hr className="border-2" />
+      <hr className="border-2" style={{ borderColor: colorHex }} />
       <div className="space-y-3">
-        <p className="text-lg font-semibold">工作经历</p>
+        <p className="text-lg font-semibold" style={{ color: colorHex }}>
+          工作经历
+        </p>
         {workExperiencesNotEmpty.map((exp, index) => (
           <div key={index} className="break-inside-avoid space-y-1">
             <div className="flex items-center justify-between  font-semibold">
-              <span>{exp.position}</span>
+              <span style={{ color: colorHex }}>{exp.position}</span>
               {exp.startDate && (
-                <span>
+                <span style={{ color: colorHex }}>
                   {formatDate(exp.startDate, "yyyy/MM")} -{" "}
                   {exp.endDate ? formatDate(exp.endDate, "yyyy/MM") : "至今"}
                 </span>
@@ -136,7 +161,7 @@ const WorkExperienceSection: React.FC<ResumeSectionProps> = ({
 };
 
 const EducationSection: React.FC<ResumeSectionProps> = ({ resumeData }) => {
-  const { educations } = resumeData;
+  const { educations, colorHex } = resumeData;
 
   const educationsNotEmpty = educations?.filter(
     (edu) => Object.values(edu).filter(Boolean).length > 0
@@ -146,12 +171,17 @@ const EducationSection: React.FC<ResumeSectionProps> = ({ resumeData }) => {
 
   return (
     <>
-      <hr className="border-2" />
+      <hr className="border-2" style={{ borderColor: colorHex }} />
       <div className="space-y-3">
-        <p className="text-lg font-semibold">教育经历</p>
+        <p className="text-lg font-semibold" style={{ color: colorHex }}>
+          教育经历
+        </p>
         {educationsNotEmpty.map((edu, index) => (
           <div key={index} className="break-inside-avoid space-y-1">
-            <div className="flex items-center justify-between font-semibold">
+            <div
+              className="flex items-center justify-between font-semibold"
+              style={{ color: colorHex }}
+            >
               <span>
                 {edu.degree}·{edu.major}
               </span>
@@ -171,13 +201,13 @@ const EducationSection: React.FC<ResumeSectionProps> = ({ resumeData }) => {
 };
 
 const SkillsSection: React.FC<ResumeSectionProps> = ({ resumeData }) => {
-  const { skills } = resumeData;
+  const { skills, colorHex, borderStyle } = resumeData;
 
   if (!skills?.length) return null;
 
   return (
     <>
-      <hr className="border-2" />
+      <hr className="border-2" style={{ borderColor: colorHex }} />
       <div className="break-inside-avoid space-y-3">
         <p className="text-lg font-semibold">技能特长</p>
         <div className="flex break-inside-avoid flex-wrap gap-2">
@@ -185,6 +215,15 @@ const SkillsSection: React.FC<ResumeSectionProps> = ({ resumeData }) => {
             <Badge
               key={index}
               className="rounded-md bg-black text-white hover:bg-black text-[16px]"
+              style={{
+                backgroundColor: colorHex,
+                borderRadius:
+                  borderStyle === BorderStyles.SQUARE
+                    ? "0px"
+                    : borderStyle === BorderStyles.CIRCLE
+                      ? "9999px"
+                      : "8px",
+              }}
             >
               {skill}
             </Badge>

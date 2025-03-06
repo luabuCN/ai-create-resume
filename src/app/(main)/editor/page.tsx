@@ -1,12 +1,18 @@
-import type { Metadata } from "next";
+import { Metadata } from "next";
 import ResumeEditor from "./components/ResumeEditor";
+import { Suspense } from "react";
 
-export const matedata: Metadata = {
-  title: "设计你的简历",
+export const metadata: Metadata = {
+  title: "编辑简历",
+  description: "使用 AI 助手创建你的简历",
 };
 
-const Page = () => {
-  return <ResumeEditor />;
+const EditorPage = () => {
+  return (
+    <Suspense>
+      <ResumeEditor />
+    </Suspense>
+  );
 };
 
-export default Page;
+export default EditorPage;

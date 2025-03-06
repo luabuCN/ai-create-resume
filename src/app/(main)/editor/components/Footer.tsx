@@ -1,20 +1,35 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import type { FC } from "react";
+import { useEffect, type FC } from "react";
 import { steps } from "../config/steps";
+import { PenLineIcon, FileUserIcon } from "lucide-react";
 
 interface FooterProps {
   currentStep: string;
   setCurrentStep: (step: string) => void;
+  showSmResumePreview: boolean;
+  setShowSmResumePreview: (show: boolean) => void;
 }
 
-const Footer: FC<FooterProps> = ({ currentStep, setCurrentStep }) => {
+const Footer: FC<FooterProps> = ({
+  currentStep,
+  setCurrentStep,
+  setShowSmResumePreview,
+  showSmResumePreview,
+}) => {
   const previousStep = steps.find(
     (_, index) => steps[index + 1]?.key === currentStep
   )?.key;
   const nextStep = steps.find(
     (_, index) => steps[index - 1]?.key === currentStep
   )?.key;
+
+  useEffect(() => {
+    console.log(
+      showSmResumePreview,
+      "setShowSmResumePreview(!showSmResumePreview)"
+    );
+  }, [showSmResumePreview]);
   return (
     <footer className="w-full border-t px-3 py-3">
       <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3">
@@ -37,6 +52,15 @@ const Footer: FC<FooterProps> = ({ currentStep, setCurrentStep }) => {
             下一步
           </Button>
         </div>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setShowSmResumePreview(!showSmResumePreview)}
+          className="md:hidden"
+          title={showSmResumePreview ? "编辑简历" : "预览简历"}
+        >
+          {showSmResumePreview ? <PenLineIcon /> : <FileUserIcon />}
+        </Button>
         <div className="flex items-center gap-3">
           <Button
             variant="secondary"
