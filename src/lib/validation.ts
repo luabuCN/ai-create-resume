@@ -11,14 +11,23 @@ export type GeneralInfoValues = z.infer<typeof generalInfoSchema>;
 
 export const presonalInfoSchema = z.object({
   photo: z
-    .custom<File | undefined>()
+    .custom<File | string | null>()
+    .nullable()
+    .optional()
     .refine(
       (file) =>
-        !File || (file instanceof File && file.type.startsWith("image/")),
-      "必须添加图片"
+        file === null ||
+        file === undefined ||
+        typeof file === "string" ||
+        (file instanceof File && file.type.startsWith("image/")),
+      "必须是图片文件"
     )
     .refine(
-      (file) => !file || (file instanceof File && file.size <= 1024 * 1024 * 4),
+      (file) =>
+        file === null ||
+        file === undefined ||
+        typeof file === "string" ||
+        (file instanceof File && file.size <= 1024 * 1024 * 4),
       "图片大小不能超过 4MB"
     ),
   name: optionalString,
@@ -46,6 +55,10 @@ export const workExperienceSchema = z.object({
 });
 
 export type WorkExperienceValues = z.infer<typeof workExperienceSchema>;
+
+export type WorkExperience = NonNullable<
+  z.infer<typeof workExperienceSchema>["workExperiences"]
+>[number];
 
 export const educationSchema = z.object({
   educations: z
@@ -89,3 +102,24 @@ export type ResumeValues = Omit<z.infer<typeof resumeSchema>, "photo"> & {
   id?: string;
   photo?: File | string | null;
 };
+
+export const generateWorkExperienceSchema = z.object({
+  description: z
+    .string()
+    .trim()
+    .min(1, "请输入工作描述")
+    .min(20, "工作描述至少20个字"),
+});
+
+export type GenerateWorkExperienceInput = z.infer<
+  typeof generateWorkExperienceSchema
+>;
+
+export const generateSummarySchema = z.object({
+  jobTitle: optionalString,
+  ...workExperienceSchema.shape,
+  ...educationSchema.shape,
+  ...skillsSchema.shape,
+});
+
+export type GenerateSummaryInput = z.infer<typeof generateSummarySchema>;

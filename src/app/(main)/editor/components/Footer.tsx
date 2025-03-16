@@ -3,12 +3,14 @@ import Link from "next/link";
 import { useEffect, type FC } from "react";
 import { steps } from "../config/steps";
 import { PenLineIcon, FileUserIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface FooterProps {
   currentStep: string;
   setCurrentStep: (step: string) => void;
   showSmResumePreview: boolean;
   setShowSmResumePreview: (show: boolean) => void;
+  isSaving: boolean;
 }
 
 const Footer: FC<FooterProps> = ({
@@ -16,6 +18,7 @@ const Footer: FC<FooterProps> = ({
   setCurrentStep,
   setShowSmResumePreview,
   showSmResumePreview,
+  isSaving,
 }) => {
   const previousStep = steps.find(
     (_, index) => steps[index + 1]?.key === currentStep
@@ -69,7 +72,14 @@ const Footer: FC<FooterProps> = ({
           >
             <Link href="/resumes">关闭</Link>
           </Button>
-          <p className=" text-muted-foreground opacity-0">保存中...</p>
+          <p
+            className={cn(
+              " text-muted-foreground opacity-0",
+              isSaving && "opacity-100"
+            )}
+          >
+            保存中...
+          </p>
         </div>
       </div>
     </footer>

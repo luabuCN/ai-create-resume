@@ -4,16 +4,27 @@ import { useSearchParams } from "next/navigation";
 import { steps } from "../config/steps";
 import Breadcrumbs from "./Breadcrumbs";
 import Footer from "./Footer";
-import { useState } from "react";
+import { useState, type FC } from "react";
 import type { ResumeValues } from "@/lib/validation";
 import ResumePreviewSection from "./ResumePreviewSection";
-import { cn } from "@/lib/utils";
+import { cn, mapToResumeValues } from "@/lib/utils";
+import useUnloadWarning from "@/hooks/useUnloadWarning";
+import { useAutoSaveResume } from "../useAutoSaveResume";
+import type { ResumeServerData } from "@/lib/types";
 
-const ResumeEditor = () => {
+interface ResumeEditorProps {
+  resumeToEdit: ResumeServerData | null;
+}
+
+const ResumeEditor: FC<ResumeEditorProps> = ({ resumeToEdit }) => {
   const searchParams = useSearchParams();
   const currentStep = searchParams.get("step") || steps[0].key;
-  const [resumeData, setResumeData] = useState<ResumeValues>({});
+  const [resumeData, setResumeData] = useState<ResumeValues>(
+    resumeToEdit ? mapToResumeValues(resumeToEdit) : {}
+  );
   const [showSmResumePreview, setShowSmResumePreview] = useState(false);
+  const { isSaving, hasUnsavedChanges } = useAutoSaveResume(resumeData);
+  useUnloadWarning(hasUnsavedChanges);
   const setCurrentStep = (key: string) => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("step", key);
@@ -23,7 +34,7 @@ const ResumeEditor = () => {
   const FormComponent = steps.find(
     (step) => step.key === currentStep
   )?.component;
-
+  useUnloadWarning();
   return (
     <div className="flex grow flex-col">
       <header className="space-y-1.5 border-b px-3 py-3 text-center">
@@ -64,6 +75,7 @@ const ResumeEditor = () => {
         setCurrentStep={setCurrentStep}
         setShowSmResumePreview={setShowSmResumePreview}
         showSmResumePreview={showSmResumePreview}
+        isSaving={isSaving}
       />
     </div>
   );

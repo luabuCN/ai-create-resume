@@ -21,6 +21,7 @@ const PersonalInfoForm: FC<EditorFormProps> = ({
   const form = useForm<PersonalInfoValues>({
     resolver: zodResolver(presonalInfoSchema),
     defaultValues: {
+      photo: resumeData.photo || null, // 添加 photo 的默认值
       name: resumeData.name || "",
       jobTitle: resumeData.jobTitle || "",
       city: resumeData.city || "",
@@ -72,7 +73,7 @@ const PersonalInfoForm: FC<EditorFormProps> = ({
                     variant="secondary"
                     type="button"
                     onClick={() => {
-                      fieldValues.onChange(undefined);
+                      fieldValues.onChange(null); // 改为 null 而不是 undefined
                       if (photoInputRef.current) {
                         photoInputRef.current.value = "";
                       }
